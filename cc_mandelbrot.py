@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-
-from PIL import Image  # If this line fails do: `pip3 install --upgrade pillow`
+# coding: utf-8
 
 '''
 Writes a mandelbrot image to FILENAME and shows it to the user.
@@ -18,6 +17,8 @@ IMG_SIZE=24 2640 x  960 elapsed time: 0:00:40.219461 rez > Apple Cinema Display
 IMG_SIZE=28 3080 x 1120 elapsed time: 0:00:55.346034
 IMG_SIZE=32 3520 x 1280 elapsed time: 0:01:11.900806
 '''
+
+from PIL import Image  # If this line fails do: `pip3 install --upgrade pillow`
 
 FILENAME = 'cc_mandelbrot.png'
 IMG_SIZE = 16   # 1 thru 16 are resonable
@@ -37,8 +38,9 @@ def make_colors():
 def make_image(pixels, size=(110 * IMG_SIZE, 40 * IMG_SIZE)):
     img = Image.new('RGB', size)
     for i, pixel in enumerate(pixels):
-        loc = (i % size[0], i // size[0])
-        img.putpixel(loc, pixel)
+        if pixel:  # do not draw black pixels
+            loc = (i % size[0], i // size[0])
+            img.putpixel(loc, pixel)
     return img
 
 
@@ -49,6 +51,9 @@ def mandelbrot(z, c, n=MAX_TRIES):
 
 
 def main():
+    import datetime, os, sys, webbrowser
+    print('\nPython ' + sys.version)  # print the python version
+
 #   prints a text only Mandelbrot
     '''
     print('\n'.join([''.join([' ' if mandelbrot(0, x + 1j * y) else '#'
@@ -61,19 +66,18 @@ def main():
 
     if IMG_SIZE > 7:
         print('Please wait: calculating Mandelbrot set...')
-    from datetime import datetime as dt
 
-    start = dt.now()
+    start = datetime.datetime.now()
     img = make_image((COLORS[mandelbrot(0, x + 1j * y)]
         for y in [a * 0.05 / IMG_SIZE for a in range(-20 * IMG_SIZE, 20 * IMG_SIZE)]
         for x in [a * 0.02 / IMG_SIZE for a in range(-80 * IMG_SIZE, 30 * IMG_SIZE)]),
         (110 * IMG_SIZE, 40 * IMG_SIZE))
     fmt = 'IMG_SIZE={:>2} {} elapsed time: {}'
-    print(fmt.format(IMG_SIZE, img.size, dt.now() - start))
-    img.save(FILENAME, 'PNG')
-
-    import os, webbrowser
-    webbrowser.open('file://' + os.path.join(os.getcwd(), FILENAME))
+    print(fmt.format(IMG_SIZE, img.size, datetime.datetime.now() - start))
+ 
+    filename = os.path.abspath(__file__).rpartition('.')[0] + '.png'
+    img.save(filename, 'PNG')
+    webbrowser.open('file://' + filename)
 
 if __name__ == '__main__':
 # for IMG_SIZE in range(4, 33, 4):  # uncomment to try 4 then 8, 12, 16, ... 32
