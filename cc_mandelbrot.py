@@ -20,7 +20,6 @@ IMG_SIZE=32 3520 x 1280 elapsed time: 0:01:11.900806
 
 from PIL import Image  # If this line fails do: `pip3 install --upgrade pillow`
 
-FILENAME = 'cc_mandelbrot.png'
 IMG_SIZE = 16   # 1 thru 16 are resonable
 MAX_TRIES = 64  # 64 is resonable
 
